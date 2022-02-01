@@ -4,6 +4,7 @@ import requests
 
 from PyQt5.QtWidgets import QApplication, QMainWindow
 from PyQt5.QtGui import QPixmap
+from PyQt5.QtCore import Qt
 
 from io import BytesIO
 from PIL import Image, ImageQt
@@ -17,7 +18,23 @@ class Map(QMainWindow, Ui_MainWindow):
         super().__init__()
         self.setupUi(self)
 
-        self.show_map('46.034158,51.533103', '0.065,0.065')
+        self.scale_size = 0.065
+
+        self.scale = (str(self.scale_size) + ',' + str(self.scale_size))
+
+        self.show_map('46.034158,51.533103', self.scale)
+
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Up:
+            if self.scale_size > 0:
+                self.scale_size -= 0.005
+                self.scale = (str(self.scale_size) + ',' + str(self.scale_size))
+                self.show_map('46.034158,51.533103', self.scale)
+        elif event.key() == Qt.Key_Down:
+            if self.scale_size < 0.1:
+                self.scale_size += 0.005
+                self.scale = (str(self.scale_size) + ',' + str(self.scale_size))
+                self.show_map('46.034158,51.533103', self.scale)
 
     def show_map(self, ll, spn, map_type='map', params=None):
         # ll и spn в формате "<число>,<число>" (да-да, для spn тоже два числа),
