@@ -15,6 +15,9 @@
     <pointsize>10</pointsize>
    </font>
   </property>
+  <property name="focusPolicy">
+   <enum>Qt::ClickFocus</enum>
+  </property>
   <property name="windowTitle">
    <string>BigTask MapAPI</string>
   </property>
@@ -70,6 +73,9 @@
     </item>
     <item row="1" column="0" colspan="3">
      <widget class="QLabel" name="map_pic">
+      <property name="focusPolicy">
+       <enum>Qt::ClickFocus</enum>
+      </property>
       <property name="text">
        <string/>
       </property>
