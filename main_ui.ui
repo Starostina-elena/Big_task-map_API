@@ -41,6 +41,9 @@
       <property name="focusPolicy">
        <enum>Qt::ClickFocus</enum>
       </property>
+      <property name="toolTip">
+       <string>Введите адрес объекта для поиска</string>
+      </property>
       <property name="statusTip">
        <string/>
       </property>

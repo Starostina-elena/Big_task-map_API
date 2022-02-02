@@ -62,6 +62,7 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "BigTask MapAPI"))
         self.btn_search_place.setText(_translate("MainWindow", "Искать"))
+        self.input_place_name.setToolTip(_translate("MainWindow", "Введите адрес объекта для поиска"))
         self.comboBox_map_type.setItemText(0, _translate("MainWindow", "карта"))
         self.comboBox_map_type.setItemText(1, _translate("MainWindow", "спутник"))
         self.comboBox_map_type.setItemText(2, _translate("MainWindow", "гибрид"))
