@@ -20,9 +20,13 @@ class Map(QMainWindow, Ui_MainWindow):
 
         self.spn_size = 0.065
 
+        self.ll_size = [46.034158, 51.533103]
+
+        self.ll = f'{self.ll_size[0]},{self.ll_size[1]}'
+
         self.spn = (str(self.spn_size) + ',' + str(self.spn_size))
 
-        self.show_map('46.034158,51.533103', self.spn)
+        self.show_map(self.ll, self.spn)
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_PageUp:
@@ -30,15 +34,40 @@ class Map(QMainWindow, Ui_MainWindow):
             if self.spn_size < 0.0005078125:
                 self.spn_size = 0.0005078125
             spn = (str(self.spn_size) + ',' + str(self.spn_size))
-            print(spn)
-            self.show_map('46.034158,51.533103', spn)
+            ll = f'{self.ll_size[0]},{self.ll_size[1]}'
+            self.show_map(ll, spn)
+
         elif event.key() == Qt.Key_PageDown:
             self.spn_size *= 2
             if self.spn_size > 66.56:
                 self.spn_size = 66.56
             spn = (str(self.spn_size) + ',' + str(self.spn_size))
-            print(spn)
-            self.show_map('46.034158,51.533103', spn)
+            ll = f'{self.ll_size[0]},{self.ll_size[1]}'
+            self.show_map(ll, spn)
+
+        elif event.key() == Qt.Key_Up:
+            self.ll_size[1] += self.spn_size * 0.6
+            ll = f'{self.ll_size[0]},{self.ll_size[1]}'
+            spn = (str(self.spn_size) + ',' + str(self.spn_size))
+            self.show_map(ll, spn)
+
+        elif event.key() == Qt.Key_Down:
+            self.ll_size[1] -= self.spn_size * 0.6
+            ll = f'{self.ll_size[0]},{self.ll_size[1]}'
+            spn = (str(self.spn_size) + ',' + str(self.spn_size))
+            self.show_map(ll, spn)
+
+        elif event.key() == Qt.Key_Right:
+            self.ll_size[0] += self.spn_size * 0.6
+            ll = f'{self.ll_size[0]},{self.ll_size[1]}'
+            spn = (str(self.spn_size) + ',' + str(self.spn_size))
+            self.show_map(ll, spn)
+
+        elif event.key() == Qt.Key_Left:
+            self.ll_size[0] -= self.spn_size * 0.6
+            ll = f'{self.ll_size[0]},{self.ll_size[1]}'
+            spn = (str(self.spn_size) + ',' + str(self.spn_size))
+            self.show_map(ll, spn)
 
     def show_map(self, ll, spn, map_type='map', params=None):
         # ll и spn в формате "<число>,<число>" (да-да, для spn тоже два числа),
