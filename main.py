@@ -26,6 +26,7 @@ class Map(QMainWindow, Ui_MainWindow):
         self.spn = (str(self.spn_size) + ',' + str(self.spn_size))
 
         self.point_coords = None  # хранит координаты метки
+        self.current_address = None
 
         self.show_map(self.ll, self.spn)
 
@@ -81,6 +82,10 @@ class Map(QMainWindow, Ui_MainWindow):
             self.ll_size = list(map(float, self.ll.split(',')))
 
             self.point_coords = self.ll_size.copy()
+
+            toponym = geocoder.geocode(self.ll)  # получение данных об объекте
+            self.current_address = toponym['metaDataProperty']['GeocoderMetaData']['text']
+            self.obj_address.setText(self.current_address)
 
             self.show_map(self.ll, self.spn)
 
