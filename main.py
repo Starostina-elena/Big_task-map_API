@@ -18,23 +18,27 @@ class Map(QMainWindow, Ui_MainWindow):
         super().__init__()
         self.setupUi(self)
 
-        self.scale_size = 0.065
+        self.spn_size = 0.065
 
-        self.scale = (str(self.scale_size) + ',' + str(self.scale_size))
+        self.spn = (str(self.spn_size) + ',' + str(self.spn_size))
 
-        self.show_map('46.034158,51.533103', self.scale)
+        self.show_map('46.034158,51.533103', self.spn)
 
     def keyPressEvent(self, event):
-        if event.key() == Qt.Key_Up:
-            if self.scale_size > 0:
-                self.scale_size -= 0.005
-                self.scale = (str(self.scale_size) + ',' + str(self.scale_size))
-                self.show_map('46.034158,51.533103', self.scale)
-        elif event.key() == Qt.Key_Down:
-            if self.scale_size < 0.1:
-                self.scale_size += 0.005
-                self.scale = (str(self.scale_size) + ',' + str(self.scale_size))
-                self.show_map('46.034158,51.533103', self.scale)
+        if event.key() == Qt.Key_PageUp:
+            self.spn_size /= 2
+            if self.spn_size < 0.0005078125:
+                self.spn_size = 0.0005078125
+            spn = (str(self.spn_size) + ',' + str(self.spn_size))
+            print(spn)
+            self.show_map('46.034158,51.533103', spn)
+        elif event.key() == Qt.Key_PageDown:
+            self.spn_size *= 2
+            if self.spn_size > 66.56:
+                self.spn_size = 66.56
+            spn = (str(self.spn_size) + ',' + str(self.spn_size))
+            print(spn)
+            self.show_map('46.034158,51.533103', spn)
 
     def show_map(self, ll, spn, map_type='map', params=None):
         # ll и spn в формате "<число>,<число>" (да-да, для spn тоже два числа),
