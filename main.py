@@ -26,7 +26,15 @@ class Map(QMainWindow, Ui_MainWindow):
 
         self.spn = (str(self.spn_size) + ',' + str(self.spn_size))
 
-        self.show_map(self.ll, self.spn)
+        self.map_types = {'гибрид': 'sat,skl',
+                          'карта': 'map',
+                          'спутник': 'sat'}
+
+        self.map_type = self.map_types[self.comboBox_map_type.currentText()]
+
+        self.comboBox_map_type.currentTextChanged.connect(self.change_map_type)
+
+        self.show_map(self.ll, self.spn, self.map_type)
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_PageUp:
@@ -35,7 +43,8 @@ class Map(QMainWindow, Ui_MainWindow):
                 self.spn_size = 0.0005078125
             spn = (str(self.spn_size) + ',' + str(self.spn_size))
             ll = f'{self.ll_size[0]},{self.ll_size[1]}'
-            self.show_map(ll, spn)
+            map_type = self.map_types[self.comboBox_map_type.currentText()]
+            self.show_map(ll, spn, map_type)
 
         elif event.key() == Qt.Key_PageDown:
             self.spn_size *= 2
@@ -43,31 +52,45 @@ class Map(QMainWindow, Ui_MainWindow):
                 self.spn_size = 66.56
             spn = (str(self.spn_size) + ',' + str(self.spn_size))
             ll = f'{self.ll_size[0]},{self.ll_size[1]}'
-            self.show_map(ll, spn)
+            map_type = self.map_types[self.comboBox_map_type.currentText()]
+            self.show_map(ll, spn, map_type)
 
         elif event.key() == Qt.Key_Up:
             self.ll_size[1] += self.spn_size * 0.6
             ll = f'{self.ll_size[0]},{self.ll_size[1]}'
             spn = (str(self.spn_size) + ',' + str(self.spn_size))
-            self.show_map(ll, spn)
+            map_type = self.map_types[self.comboBox_map_type.currentText()]
+            self.show_map(ll, spn, map_type)
 
         elif event.key() == Qt.Key_Down:
             self.ll_size[1] -= self.spn_size * 0.6
             ll = f'{self.ll_size[0]},{self.ll_size[1]}'
             spn = (str(self.spn_size) + ',' + str(self.spn_size))
-            self.show_map(ll, spn)
+            map_type = self.map_types[self.comboBox_map_type.currentText()]
+            self.show_map(ll, spn, map_type)
 
         elif event.key() == Qt.Key_Right:
             self.ll_size[0] += self.spn_size * 0.6
             ll = f'{self.ll_size[0]},{self.ll_size[1]}'
             spn = (str(self.spn_size) + ',' + str(self.spn_size))
-            self.show_map(ll, spn)
+            map_type = self.map_types[self.comboBox_map_type.currentText()]
+            self.show_map(ll, spn, map_type)
 
         elif event.key() == Qt.Key_Left:
             self.ll_size[0] -= self.spn_size * 0.6
             ll = f'{self.ll_size[0]},{self.ll_size[1]}'
             spn = (str(self.spn_size) + ',' + str(self.spn_size))
-            self.show_map(ll, spn)
+            map_type = self.map_types[self.comboBox_map_type.currentText()]
+            self.show_map(ll, spn, map_type)
+
+    def change_map_type(self):
+        self.ll = f'{self.ll_size[0]},{self.ll_size[1]}'
+
+        self.spn = (str(self.spn_size) + ',' + str(self.spn_size))
+
+        self.map_type = self.map_types[self.comboBox_map_type.currentText()]
+
+        self.show_map(self.ll, self.spn, self.map_type)
 
     def show_map(self, ll, spn, map_type='map', params=None):
         # ll и spn в формате "<число>,<число>" (да-да, для spn тоже два числа),
