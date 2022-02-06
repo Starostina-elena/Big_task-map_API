@@ -1,4 +1,5 @@
 import sys
+import math
 
 import requests
 
@@ -11,7 +12,7 @@ from PIL import Image, ImageQt
 
 from main_ui import Ui_MainWindow
 
-from Samples import geocoder
+from Samples import geocoder, business
 
 '''from Samples import geocoder'''
 
@@ -98,11 +99,13 @@ class Map(QMainWindow, Ui_MainWindow):
 
         self.show_map(self.ll, self.spn, self.map_type)
 
+        self.comboBox_map_type.clearFocus()
+
     def search_place_with_name(self):
         """Находит место по названию в поле для ввода"""
 
         if self.input_place_name.text():
-            self.ll, self.spn = geocoder.get_ll_span(self.input_place_name.text())
+            self.ll, self.spn = geocoder.get_ll_span(self.input_place_name.text())  # адрес
             self.spn_size = min(list(map(float, self.spn.split(','))))
             self.ll_size = list(map(float, self.ll.split(',')))
 
@@ -112,7 +115,7 @@ class Map(QMainWindow, Ui_MainWindow):
             self.current_address = toponym['metaDataProperty']['GeocoderMetaData']['text']
             self.obj_address.setText(self.current_address)
 
-            self.show_map(self.ll, self.spn)
+            self.show_map(self.ll, self.spn, self.map_type)
 
             self.btn_search_place.clearFocus()
 
@@ -139,6 +142,65 @@ class Map(QMainWindow, Ui_MainWindow):
         # установка полученного изображения
         self.img = ImageQt.ImageQt(Image.open(BytesIO(response.content)))
         self.map_pic.setPixmap(QPixmap.fromImage(self.img))
+
+    def mousePressEvent(self, event):
+
+        if event.button() == Qt.LeftButton:
+            if self.map_pic.pos().x() <= event.pos().x() <= self.map_pic.pos().x() + self.map_pic.width() and \
+                    self.map_pic.pos().y() <= event.pos().y() <= self.map_pic.pos().y() + self.map_pic.height():
+                # print(math.radians(self.ll_size[1]), math.radians(self.ll_size[0]))
+                # x = (event.pos().x() - self.map_pic.pos().x() - self.map_pic.width() // 2) * \
+                #     self.spn_size * 3.45 / 650 + self.ll_size[0]
+                # y = (event.pos().y() - self.map_pic.pos().y() - self.map_pic.height() // 2) * \
+                #     self.spn_size * 1.47 / 450 * (-1) + self.ll_size[1]
+                x = (event.pos().x() - self.map_pic.pos().x() - self.map_pic.width() // 2) * \
+                    self.spn_size * 2.69 / math.sin(math.radians(self.ll_size[1])) / self.map_pic.width() + self.ll_size[0]
+                y = (event.pos().y() - self.map_pic.pos().y() - self.map_pic.height() // 2) * \
+                    self.spn_size * 0.925 / math.cos(math.radians(self.ll_size[1])) / self.map_pic.height() * (-1) + self.ll_size[1]
+                # разбор этих двух формул:
+
+                params = {
+                    'pt': f'{x},{y},comma'
+                }
+
+                self.point_coords = [x, y]
+
+                self.show_map(f'{self.ll_size[0]},{self.ll_size[1]}', f'{self.spn_size},{self.spn_size}',
+                              map_type=self.map_type, params=params)
+
+                toponym = geocoder.geocode(f'{x},{y}')
+                self.current_address = toponym['metaDataProperty']['GeocoderMetaData']['text']
+                self.obj_address.setText(self.current_address)
+
+        elif event.button() == Qt.RightButton:
+            if self.map_pic.pos().x() <= event.pos().x() <= self.map_pic.pos().x() + self.map_pic.width() and \
+                    self.map_pic.pos().y() <= event.pos().y() <= self.map_pic.pos().y() + self.map_pic.height():
+                x = (event.pos().x() - self.map_pic.pos().x() - self.map_pic.width() // 2) * \
+                    self.spn_size * 2.69 / math.sin(math.radians(self.ll_size[1])) / self.map_pic.width() + \
+                    self.ll_size[0]
+                y = (event.pos().y() - self.map_pic.pos().y() - self.map_pic.height() // 2) * \
+                    self.spn_size * 0.925 / math.cos(math.radians(self.ll_size[1])) / self.map_pic.height() * (-1) + \
+                    self.ll_size[1]
+                # разбор этих двух формул:
+
+                params = {
+                    'pt': f'{x},{y},comma'
+                }
+
+                self.show_map(f'{self.ll_size[0]},{self.ll_size[1]}', f'{self.spn_size},{self.spn_size}',
+                              map_type=self.map_type, params=params)
+
+                org_name = geocoder.geocode(f'{x},{y}')['metaDataProperty']['GeocoderMetaData']['text']
+
+                org = business.find_business(f'{x},{y}', '0.00045,0.00045', org_name)  # 0.00045 - ~50м в градусах
+
+                if org:
+                    self.current_address = org['properties']['CompanyMetaData']['address']
+                    self.obj_address.setText(f"{org['properties']['CompanyMetaData']['name']} - {self.current_address}")
+                else:
+                    print('ничего не найдено')
+
+                self.point_coords = [x, y]
 
 
 def except_hook(cls, exception, traceback):
