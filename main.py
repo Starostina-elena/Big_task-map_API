@@ -43,6 +43,8 @@ class Map(QMainWindow, Ui_MainWindow):
 
         self.btn_search_place.clicked.connect(self.search_place_with_name)
 
+        self.btn_reset_place.clicked.connect(self.reset)
+
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_PageUp:
             self.spn_size /= 2
@@ -118,6 +120,13 @@ class Map(QMainWindow, Ui_MainWindow):
             self.show_map(self.ll, self.spn, self.map_type)
 
             self.btn_search_place.clearFocus()
+
+    def reset(self):
+        print()
+        self.point_coords = None
+        self.current_address = None
+        self.obj_address.clear()
+        self.show_map(self.ll, self.spn, self.map_type)
 
     def show_map(self, ll, spn, map_type='map', params=None):
         # ll и spn в формате "<число>,<число>" (да-да, для spn тоже два числа),
