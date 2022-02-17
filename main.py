@@ -45,7 +45,12 @@ class Map(QMainWindow, Ui_MainWindow):
 
         self.btn_reset_place.clicked.connect(self.reset)
 
+        self.index_point = False
+
+        self.btn_index.clicked.connect(self.change_address_index)
+
     def keyPressEvent(self, event):
+        """Перемещение по карте"""
         if event.key() == Qt.Key_PageUp:
             self.spn_size /= 2
             if self.spn_size < 0.0005078125:
@@ -92,7 +97,19 @@ class Map(QMainWindow, Ui_MainWindow):
             map_type = self.map_types[self.comboBox_map_type.currentText()]
             self.show_map(ll, spn, map_type)
 
+    def change_address_index(self):
+        if self.index_point:
+            self.obj_address.setText(self.current_address)
+            self.index_point = False
+        else:
+            toponym = geocoder.geocode(self.ll)
+            self.current_index = toponym['metaDataProperty']['GeocoderMetaData']['Address']['postal_code']
+            text = f'{self.current_address}, {self.current_index}'
+            self.obj_address.setText(text)
+            self.index_point = True
+
     def change_map_type(self):
+        """Меняет тип карты"""
         self.ll = f'{self.ll_size[0]},{self.ll_size[1]}'
 
         self.spn = (str(self.spn_size) + ',' + str(self.spn_size))
@@ -116,16 +133,19 @@ class Map(QMainWindow, Ui_MainWindow):
             toponym = geocoder.geocode(self.ll)  # получение данных об объекте
             self.current_address = toponym['metaDataProperty']['GeocoderMetaData']['text']
             self.obj_address.setText(self.current_address)
+            self.index_point = False
 
             self.show_map(self.ll, self.spn, self.map_type)
 
             self.btn_search_place.clearFocus()
 
     def reset(self):
-        print()
+        """Сброс всех поисковых результатов"""
         self.point_coords = None
         self.current_address = None
+
         self.obj_address.clear()
+
         self.show_map(self.ll, self.spn, self.map_type)
 
     def show_map(self, ll, spn, map_type='map', params=None):
@@ -163,9 +183,11 @@ class Map(QMainWindow, Ui_MainWindow):
                 # y = (event.pos().y() - self.map_pic.pos().y() - self.map_pic.height() // 2) * \
                 #     self.spn_size * 1.47 / 450 * (-1) + self.ll_size[1]
                 x = (event.pos().x() - self.map_pic.pos().x() - self.map_pic.width() // 2) * \
-                    self.spn_size * 2.69 / math.sin(math.radians(self.ll_size[1])) / self.map_pic.width() + self.ll_size[0]
+                    self.spn_size * 2.69 / math.sin(math.radians(self.ll_size[1])) / self.map_pic.width() + \
+                    self.ll_size[0]
                 y = (event.pos().y() - self.map_pic.pos().y() - self.map_pic.height() // 2) * \
-                    self.spn_size * 0.925 / math.cos(math.radians(self.ll_size[1])) / self.map_pic.height() * (-1) + self.ll_size[1]
+                    self.spn_size * 0.925 / math.cos(math.radians(self.ll_size[1])) / self.map_pic.height() * (-1) + \
+                    self.ll_size[1]
                 # разбор этих двух формул:
 
                 params = {
