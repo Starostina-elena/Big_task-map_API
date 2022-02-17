@@ -23,6 +23,42 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
+    <item row="6" column="0" colspan="4">
+     <widget class="QLabel" name="map_pic">
+      <property name="focusPolicy">
+       <enum>Qt::ClickFocus</enum>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="3">
+     <widget class="QPushButton" name="btn_search_place">
+      <property name="focusPolicy">
+       <enum>Qt::ClickFocus</enum>
+      </property>
+      <property name="acceptDrops">
+       <bool>false</bool>
+      </property>
+      <property name="text">
+       <string>Искать</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QLineEdit" name="input_place_name">
+      <property name="focusPolicy">
+       <enum>Qt::ClickFocus</enum>
+      </property>
+      <property name="toolTip">
+       <string>Введите адрес объекта для поиска</string>
+      </property>
+      <property name="statusTip">
+       <string/>
+      </property>
+     </widget>
+    </item>
     <item row="0" column="0">
      <widget class="QComboBox" name="comboBox_map_type">
       <property name="focusPolicy">
@@ -48,45 +84,9 @@
       </item>
      </widget>
     </item>
-    <item row="0" column="3">
-     <widget class="QPushButton" name="btn_search_place">
-      <property name="focusPolicy">
-       <enum>Qt::ClickFocus</enum>
-      </property>
-      <property name="acceptDrops">
-       <bool>false</bool>
-      </property>
+    <item row="4" column="0" rowspan="2" colspan="3">
+     <widget class="QLabel" name="obj_address">
       <property name="text">
-       <string>Искать</string>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="0" colspan="4">
-     <widget class="QLabel" name="map_pic">
-      <property name="focusPolicy">
-       <enum>Qt::ClickFocus</enum>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="3">
-     <widget class="QPushButton" name="pushButton">
-      <property name="text">
-       <string>Индекс</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="1">
-     <widget class="QLineEdit" name="input_place_name">
-      <property name="focusPolicy">
-       <enum>Qt::ClickFocus</enum>
-      </property>
-      <property name="toolTip">
-       <string>Введите адрес объекта для поиска</string>
-      </property>
-      <property name="statusTip">
        <string/>
       </property>
      </widget>
@@ -98,10 +98,10 @@
       </property>
      </widget>
     </item>
-    <item row="1" column="0" rowspan="2" colspan="3">
-     <widget class="QLabel" name="obj_address">
+    <item row="3" column="3">
+     <widget class="QCheckBox" name="check_index">
       <property name="text">
-       <string/>
+       <string>Индекс</string>
       </property>
      </widget>
     </item>
