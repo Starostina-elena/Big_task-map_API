@@ -98,17 +98,16 @@ class Map(QMainWindow, Ui_MainWindow):
             self.show_map(ll, spn, map_type)
 
     def change_address_index(self):
-        print(1)
         if self.index_point:
-            self.obj_address.setText(self.current_address)
+            self.obj_address.setPlainText(self.current_address)
             self.index_point = False
         else:
             try:
+                self.index_point = True
                 toponym = geocoder.geocode(f'{self.point_coords[0]},{self.point_coords[1]}')
                 self.current_index = toponym['metaDataProperty']['GeocoderMetaData']['Address']['postal_code']
                 text = f'{self.current_address}, {self.current_index}'
-                self.obj_address.setText(text)
-                self.index_point = True
+                self.obj_address.setPlainText(text)
             except Exception:
                 pass
 
@@ -137,11 +136,14 @@ class Map(QMainWindow, Ui_MainWindow):
             toponym = geocoder.geocode(self.ll)  # получение данных об объекте
             self.current_address = toponym['metaDataProperty']['GeocoderMetaData']['text']
             if self.index_point:
-                self.current_index = toponym['metaDataProperty']['GeocoderMetaData']['Address']['postal_code']
-                text = f'{self.current_address}, {self.current_index}'
-                self.obj_address.setText(text)
+                try:
+                    self.current_index = toponym['metaDataProperty']['GeocoderMetaData']['Address']['postal_code']
+                    text = f'{self.current_address}, {self.current_index}'
+                    self.obj_address.setPlainText(text)
+                except Exception:
+                    self.obj_address.setPlainText(self.current_address)
             else:
-                self.obj_address.setText(self.current_address)
+                self.obj_address.setPlainText(self.current_address)
 
             self.show_map(self.ll, self.spn, self.map_type)
 
@@ -153,6 +155,7 @@ class Map(QMainWindow, Ui_MainWindow):
         self.current_address = None
 
         self.obj_address.clear()
+        self.input_place_name.setText('')
 
         self.show_map(self.ll, self.spn, self.map_type)
 
@@ -210,11 +213,14 @@ class Map(QMainWindow, Ui_MainWindow):
                 toponym = geocoder.geocode(f'{x},{y}')
                 self.current_address = toponym['metaDataProperty']['GeocoderMetaData']['text']
                 if self.index_point:
-                    self.current_index = toponym['metaDataProperty']['GeocoderMetaData']['Address']['postal_code']
-                    text = f'{self.current_address}, {self.current_index}'
-                    self.obj_address.setText(text)
+                    try:
+                        self.current_index = toponym['metaDataProperty']['GeocoderMetaData']['Address']['postal_code']
+                        text = f'{self.current_address}, {self.current_index}'
+                        self.obj_address.setPlainText(text)
+                    except Exception:
+                        self.obj_address.setPlainText(self.current_address)
                 else:
-                    self.obj_address.setText(self.current_address)
+                    self.obj_address.setPlainText(self.current_address)
 
         elif event.button() == Qt.RightButton:
             if self.map_pic.pos().x() <= event.pos().x() <= self.map_pic.pos().x() + self.map_pic.width() and \
@@ -234,18 +240,23 @@ class Map(QMainWindow, Ui_MainWindow):
                 self.show_map(f'{self.ll_size[0]},{self.ll_size[1]}', f'{self.spn_size},{self.spn_size}',
                               map_type=self.map_type, params=params)
 
-                org_name = geocoder.geocode(f'{x},{y}')['metaDataProperty']['GeocoderMetaData']['text']
+                organization = geocoder.geocode(f'{x},{y}')['metaDataProperty']['GeocoderMetaData']
+                org_name = organization['text']
 
                 org = business.find_business(f'{x},{y}', '0.00045,0.00045', org_name)  # 0.00045 - ~50м в градусах
 
                 if org:
                     self.current_address = org['properties']['CompanyMetaData']['address']
                     if self.index_point:
-                        self.current_index = org['metaDataProperty']['GeocoderMetaData']['Address']['postal_code']
-                        text = f'{self.current_address}, {self.current_index}'
-                        self.obj_address.setText(text)
+                        try:
+                            self.current_index = organization['Address']['postal_code']
+                            text = f"{org['properties']['CompanyMetaData']['name']} - {self.current_address}, {self.current_index}"
+                            self.obj_address.setPlainText(text)
+                        except Exception:
+                            self.obj_address.setPlainText(
+                                f"{org['properties']['CompanyMetaData']['name']} - {self.current_address}")
                     else:
-                        self.obj_address.setText(f"{org['properties']['CompanyMetaData']['name']} - {self.current_address}")
+                        self.obj_address.setPlainText(f"{org['properties']['CompanyMetaData']['name']} - {self.current_address}")
 
                 else:
                     print('ничего не найдено')
